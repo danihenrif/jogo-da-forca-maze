@@ -1,0 +1,8 @@
+daniel; prego, 7;
+souza; prego, 7;
+ç; -6;
+daniel; prego, 2;
+daniel; prego, prego, 12;
+daniel; -1;
+s; -4;
+paulo; tela, 0;

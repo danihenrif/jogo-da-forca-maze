@@ -9,6 +9,7 @@
 #include <thread>//sleep
 
 #include <random>//random number
+#include <ctime>//random number
 
 using namespace std;
 
@@ -57,12 +58,12 @@ void JogoForca::initialize_game(int argc, string nomeArquivo){
     state = RUNNING;    
 }
 
-void JogoForca::process_actions(){
+void JogoForca::process_actions(){  
     if(state == RUNNING || state == FIRST_TIME){
         if (state == FIRST_TIME){
             palavra = sortWord(); //sorteia a palavra
             tamanhoPalavra = palavra.length();
-            //Underlines
+            //Acrescenta os underlines na palavra da forca
             for(int i = 0 ; i < tamanhoPalavra ; i++){
                 palavraForca.push_back('_');
             }
@@ -72,16 +73,26 @@ void JogoForca::process_actions(){
 }
 
 void JogoForca::loop(){
+    //Iniciar o jogo ou listar
+    cout << "Você deseja jogar ou listar os scores anteriores (1/0)? ";
+    int op;
+    cin >> op;
+    cin.ignore();
     
-    while(state != GAME_OVER){
-        if (iteracoes == 0){state=FIRST_TIME;}
-        else if(iteracoes == -1){state=GAME_OVER;}
-        else{state=RUNNING;}
-        process_actions();
+    if(op == 0){
+        ifstream arq("data/scores.txt");
+        if(arq.is_open()){
+            cout << arq.rdbuf();
+        }
     }
-
-    //Salva no arquivo de saida 
-
+    else{
+        while(state != GAME_OVER){
+            if (iteracoes == 0){state=FIRST_TIME;}
+            else if(iteracoes == -1){state=GAME_OVER;}
+            else{state=RUNNING;}
+            process_actions();
+        }
+    }
 }
 
 void JogoForca::geraTela(){
@@ -95,15 +106,13 @@ void JogoForca::geraTela(){
             if(i == 0){cout << palavraForca[0];}
             else{
                 cout << " " << palavraForca[i];     
-            }
-           
+            } 
         }
         cout << endl;
         iteracoes++;
     }
     
     else{
-
         //Entrada do usuário
         cout << "Digite uma letra: ";
         cin >> letra;
@@ -111,7 +120,7 @@ void JogoForca::geraTela(){
 
         bool acerto = 0;
 
-        //Busca letra na string
+        //Busca letra na string e muda caso acerte
         for(int i = 0 ; i < tamanhoPalavra ; i++){
             if(letra == palavra[i]){
                 acerto = 1;
@@ -125,7 +134,7 @@ void JogoForca::geraTela(){
             pontos--; //se não acertou perde ponto
         }
 
-        system("clear");
+        clearScreen();
         cout << "Pontos: " << pontos << endl;
 
         printaForca(erros);
@@ -143,6 +152,7 @@ void JogoForca::geraTela(){
 }
 
 string JogoForca::sortWord(){
+    srand(time(NULL));
     int random = rand() % lineCount;
     return palavras[random];
 }
@@ -160,13 +170,15 @@ void JogoForca::printaPalavraForca(){
 void JogoForca::resolveWINORLOSE(){      
         if(erros ==  6){
             cout << "GAMEOVER :C, a palavra era " << palavra << endl;
-            cout << "Informe o seu nome: ";
-            cin >> nomeJogador;
-            iteracoes = -1;
+            arquivo();//Adiciona no arquivo
+            state=GAME_OVER;
+            return;
         }
 
         if(palavraForca == palavra){
-            palavrasAcertadas.push_back(palavra);
+            palavrasAcertadas.push_back(palavra);//Adiciona a palavra na lista de palavras acertadas
+            
+            /*Checa se venceu sem errar*/
             if (erros == 0){
                 cout << "Parabéns, você acertou a palavra inteira sem erros, isso te dá 2 pontos adicionais !!" << endl;
                 pontos+=2;
@@ -178,36 +190,48 @@ void JogoForca::resolveWINORLOSE(){
                 cout << "Pontos: " << pontos << endl;
 
             }
+            /*                         */
+            
             cout << "Você deseja continuar jogando ? (1/0)(Sim/Não): ";
             
             int resposta;
             cin >> resposta;
 
             wait(1000);
-            system("clear");
+            clearScreen();
+            
+            // Se quer continuar, zera as variáveis de controle para a próxima rodada
             if(resposta == 1){
                 iteracoes = 0;
                 erros = 0;
-                palavraForca = "\0";           
+                palavraForca = "\0";       
             }
-            else{
-                iteracoes = -1;
-                cout << "Informe o seu nome: ";
-                cin >> nomeJogador;
-                
-                ofstream f_out;
-                f_out.open("data/scores.txt",ios::app);
-                
-                if(f_out.is_open()){
-                    f_out << nomeJogador << "; ";
-                    for(vector<string>::iterator it = palavrasAcertadas.begin(); it != palavrasAcertadas.end() ; it++){
-                        f_out << *it << ", ";
-                    }
-                    f_out << pontos << ";" << endl;
-                }
-                else{
-                    cout << "Erro ao abrir o arquivo scores.txt" << endl;
-                }
+            else{//Se não grava no arquivo
+                arquivo();
             }
         }    
+}
+
+void JogoForca::arquivo(){
+    state=GAME_OVER;
+    cout << "Informe o seu nome: ";
+    cin >> nomeJogador;
+                
+    //Adiciona os dados da rodada no arquivo
+    ofstream f_out;
+    f_out.open("data/scores.txt",ios::app);//Abre o arquivo
+                
+    if(f_out.is_open()){
+        f_out << nomeJogador << "; "; //Adiciona o nome do jogador no arquivo
+        
+        for(vector<string>::iterator it = palavrasAcertadas.begin(); it != palavrasAcertadas.end() ; it++){//Palavras acertadas
+            f_out << *it << ", ";
+        }
+        
+        f_out << pontos << ";" << endl; //Adiciona a pontuação no arquivo
+        cout << "Seus dados foram gravados em data/scores.txt" << endl;
+    }
+    else{
+        cout << "Erro ao abrir o arquivo scores.txt" << endl;
+    }    
 }

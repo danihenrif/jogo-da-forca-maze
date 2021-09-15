@@ -16,17 +16,17 @@ class JogoForca{
         };
     private:
         vector<string> palavras; //Vector para armazenas as palavras do jogo da forca vindas do arquivo txt
-        vector<string> palavrasAcertadas;
+        vector<string> palavrasAcertadas;//Palavras já acertadas pelo usuário
         char letra; //Letra de entrada do usuário
         string palavra; //Palavra sorteada
-        string palavraForca;
-        string nomeJogador;
-        int tamanhoPalavra;
+        string palavraForca;//Palavra que aparece na forca, inicialmente underlines
+        string nomeJogador;//Nome do jogador
+        int tamanhoPalavra;//tamanho da palavra
         GameStates state; //Armazena o estado do jogo
-        int lineCount;
-        int pontos; 
-        int erros;
-        int iteracoes;
+        int lineCount;//Quantidade de linhas do arquivo
+        int pontos; //Pontos do usuário
+        int erros;//Quantidade de erros
+        int iteracoes;//Quantidad de iterações 
     public:
         JogoForca(int argc, string nomeArquivo); //Construtor
         ~JogoForca(); //Destrutor
@@ -38,6 +38,7 @@ class JogoForca{
         string sortWord();
         void printaPalavraForca();
         void resolveWINORLOSE();
+        void arquivo();
 
 };
 
