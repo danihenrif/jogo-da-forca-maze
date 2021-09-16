@@ -32,13 +32,13 @@ class JogoForca{
         ~JogoForca(); //Destrutor
         
         void initialize_game(int argc, string nomeArquivo);
-        void process_actions();
-        void geraTela();
-        void loop();
-        string sortWord();
-        void printaPalavraForca();
-        void resolveWINORLOSE();
-        void arquivo();
+        void process_actions();//Processa as ações do jogo
+        void geraTela();//Printa toda a tela do jogo
+        void loop();//Loop principal do jogo
+        string sortWord();//Sorteia a palavra da forca
+        void printaPalavraForca();//aparece na forca, inicialmente underlines
+        void resolveWINORLOSE();//Checa se o usuário ganha ou perde o jogo
+        void arquivo();//Salva os dados no arquivo, pós GAMEOVER
 
 };
 

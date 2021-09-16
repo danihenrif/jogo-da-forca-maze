@@ -58,6 +58,30 @@ void JogoForca::initialize_game(int argc, string nomeArquivo){
     state = RUNNING;    
 }
 
+
+void JogoForca::loop(){
+    //Iniciar o jogo ou listar
+    cout << "Você deseja jogar ou listar os scores anteriores (1/0)? ";
+    int op;
+    cin >> op;
+    cin.ignore();
+    
+    if(op == 0){
+        ifstream arq("data/scores.txt");//abre o arquivo scpres.txt
+        if(arq.is_open()){
+            cout << arq.rdbuf();//printa o conteudo do arquivo scores.txt
+        }
+    }
+    else{
+        while(state != GAME_OVER){ //Loop de realização do jogo
+            if (iteracoes == 0){state=FIRST_TIME;}
+            else if(iteracoes == -1){state=GAME_OVER;}
+            else{state=RUNNING;}
+            process_actions();
+        }
+    }
+}
+
 void JogoForca::process_actions(){  
     if(state == RUNNING || state == FIRST_TIME){
         if (state == FIRST_TIME){
@@ -72,28 +96,6 @@ void JogoForca::process_actions(){
     }
 }
 
-void JogoForca::loop(){
-    //Iniciar o jogo ou listar
-    cout << "Você deseja jogar ou listar os scores anteriores (1/0)? ";
-    int op;
-    cin >> op;
-    cin.ignore();
-    
-    if(op == 0){
-        ifstream arq("data/scores.txt");
-        if(arq.is_open()){
-            cout << arq.rdbuf();
-        }
-    }
-    else{
-        while(state != GAME_OVER){
-            if (iteracoes == 0){state=FIRST_TIME;}
-            else if(iteracoes == -1){state=GAME_OVER;}
-            else{state=RUNNING;}
-            process_actions();
-        }
-    }
-}
 
 void JogoForca::geraTela(){
     if(iteracoes == 0){//Primeira interação
