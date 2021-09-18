@@ -13,7 +13,7 @@ Para compilar, dentro da pasta jogo-da-forca, digite no terminal os comandos:
 $ g++ src/*.cpp -o main -I../include -std=c++11
 ```
 
-Para executar com o arquivo .txt, digite no terminal :
+Para executar e testar, crie um arquivo txt, insira as palavras e  digite no terminal :
 ```console
 $ ./main "nome-do-arquivo.txt"
   ex: ./main words.txt
@@ -26,4 +26,4 @@ $ ./main "nome-do-arquivo.txt"
 <br>
 
 ## Limitações
-* O jogo não barra letras repetidas
+* O jogo não impede repetição de letras na entrada do usuário

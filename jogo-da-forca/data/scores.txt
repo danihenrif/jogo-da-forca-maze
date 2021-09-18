@@ -1,1 +1,1 @@
-daniel; estojo, almofada, 13;
+daniel; teclado, cesta, 12;

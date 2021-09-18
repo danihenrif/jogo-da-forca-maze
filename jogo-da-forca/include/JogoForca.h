@@ -26,7 +26,6 @@ class JogoForca{
         int lineCount;//Quantidade de linhas do arquivo
         int pontos; //Pontos do usuário
         int erros;//Quantidade de erros
-        int iteracoes;//Quantidad de iterações 
     public:
         JogoForca(int argc, string nomeArquivo); //Construtor
         ~JogoForca(); //Destrutor

@@ -16,7 +16,7 @@ using namespace std;
 JogoForca::JogoForca(int argc, string nomeArquivo){
     letra = '\0';
     pontos = 0;
-    iteracoes = 0;
+    erros = 0;
     initialize_game(argc,nomeArquivo); 
 }
 
@@ -55,7 +55,7 @@ void JogoForca::initialize_game(int argc, string nomeArquivo){
         state = GAME_OVER;
         return;
     }
-    state = RUNNING;    
+    state = FIRST_TIME;    
 }
 
 
@@ -76,9 +76,6 @@ void JogoForca::loop(){
     }
     else{//Loop para o jogo
         while(state != GAME_OVER){ //Loop de realização do jogo
-            if (iteracoes == 0){state=FIRST_TIME;}
-            else if(iteracoes == -1){state=GAME_OVER;}
-            else{state=RUNNING;}
             process_actions();
         }
     }
@@ -89,6 +86,7 @@ void JogoForca::process_actions(){
         if (state == FIRST_TIME){
             palavra = sortWord(); //sorteia a palavra
             tamanhoPalavra = palavra.length();
+            
             //Acrescenta os underlines na palavra da forca
             for(int i = 0 ; i < tamanhoPalavra ; i++){
                 palavraForca.push_back('_');
@@ -100,7 +98,7 @@ void JogoForca::process_actions(){
 
 
 void JogoForca::geraTela(){
-    if(iteracoes == 0){//Primeira interação
+    if(state == FIRST_TIME){//Primeira interação
         cout << "Pontos: " << pontos << endl;
         
         printaForca(erros);
@@ -113,7 +111,7 @@ void JogoForca::geraTela(){
             } 
         }
         cout << endl;
-        iteracoes++;
+        state = RUNNING;
     }
     
     else{
@@ -149,8 +147,6 @@ void JogoForca::geraTela(){
             cout << "ESSA LETRA NÂO ESTÀ NA PALAVRA :D" << endl;
         }
 
-        iteracoes++;
-
         resolveWINORLOSE();
     }
 }
@@ -172,48 +168,47 @@ void JogoForca::printaPalavraForca(){
 }
 
 void JogoForca::resolveWINORLOSE(){      
-        if(erros ==  6){
-            cout << "GAMEOVER :C, a palavra era " << palavra << endl;
-            arquivo();//Grava no arquivo
-            state=GAME_OVER;
-            return;
+    if(erros ==  6){
+        cout << "GAMEOVER :C, a palavra era " << palavra << endl;
+        arquivo();//Grava no arquivo
+        return;
+    }
+
+    if(palavraForca == palavra){
+        palavrasAcertadas.push_back(palavra);//Adiciona a palavra na lista de palavras acertadas
+            
+        /*Checa se venceu sem errar*/
+        if (erros == 0){
+            cout << "Parabéns, você acertou a palavra inteira sem erros, isso te dá 1 ponto adicional !!" << endl;
+            pontos++;
+            cout << "Pontos: " << pontos << endl;
         }
+        else{
+            cout << "Parabéns, você acertou a palavra e ganhará mais 2 pontos" << endl;
+            pontos+=2;
+            cout << "Pontos: " << pontos << endl;
 
-        if(palavraForca == palavra){
-            palavrasAcertadas.push_back(palavra);//Adiciona a palavra na lista de palavras acertadas
+        }
+        /*                         */
             
-            /*Checa se venceu sem errar*/
-            if (erros == 0){
-                cout << "Parabéns, você acertou a palavra inteira sem erros, isso te dá 1 ponto adicional !!" << endl;
-                pontos++;
-                cout << "Pontos: " << pontos << endl;
-            }
-            else{
-                cout << "Parabéns, você acertou a palavra e ganhará mais 2 pontos" << endl;
-                pontos+=2;
-                cout << "Pontos: " << pontos << endl;
+        cout << "Você deseja continuar jogando ? (1/0)(Sim/Não): ";
+            
+        int resposta;
+        cin >> resposta;
 
-            }
-            /*                         */
+        wait(1000);
+        clearScreen();
             
-            cout << "Você deseja continuar jogando ? (1/0)(Sim/Não): ";
-            
-            int resposta;
-            cin >> resposta;
-
-            wait(1000);
-            clearScreen();
-            
-            // Se quer continuar, zera as variáveis de controle para a próxima rodada
-            if(resposta == 1){
-                iteracoes = 0;
-                erros = 0;
-                palavraForca = "\0";       
-            }
-            else{//Se não grava no arquivo
-                arquivo();
-            }
-        }    
+        // Se quer continuar, zera as variáveis de controle para a próxima rodada
+        if(resposta == 1){
+            state=FIRST_TIME;
+            erros = 0;
+            palavraForca = "\0";       
+        }
+        else{//Se não grava no arquivo
+            arquivo();
+        }
+    }    
 }
 
 void JogoForca::arquivo(){
