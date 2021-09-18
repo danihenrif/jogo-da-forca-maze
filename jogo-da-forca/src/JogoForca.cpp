@@ -66,13 +66,13 @@ void JogoForca::loop(){
     cin >> op;
     cin.ignore();
     
-    if(op == 0){
+    if(op == 0){//Lista os scores anteriores
         ifstream arq("data/scores.txt");//abre o arquivo scpres.txt
         if(arq.is_open()){
             cout << arq.rdbuf();//printa o conteudo do arquivo scores.txt
         }
     }
-    else{
+    else{//Loop para o jogo
         while(state != GAME_OVER){ //Loop de realização do jogo
             if (iteracoes == 0){state=FIRST_TIME;}
             else if(iteracoes == -1){state=GAME_OVER;}
@@ -172,7 +172,7 @@ void JogoForca::printaPalavraForca(){
 void JogoForca::resolveWINORLOSE(){      
         if(erros ==  6){
             cout << "GAMEOVER :C, a palavra era " << palavra << endl;
-            arquivo();//Adiciona no arquivo
+            arquivo();//Grava no arquivo
             state=GAME_OVER;
             return;
         }
@@ -182,13 +182,13 @@ void JogoForca::resolveWINORLOSE(){
             
             /*Checa se venceu sem errar*/
             if (erros == 0){
-                cout << "Parabéns, você acertou a palavra inteira sem erros, isso te dá 2 pontos adicionais !!" << endl;
-                pontos+=2;
+                cout << "Parabéns, você acertou a palavra inteira sem erros, isso te dá 1 ponto adicional !!" << endl;
+                pontos++;
                 cout << "Pontos: " << pontos << endl;
             }
             else{
-                cout << "Parabéns, você acertou a palavra e ganhará 1 ponto adicional" << endl;
-                pontos++;
+                cout << "Parabéns, você acertou a palavra e ganhará mais 2 pontos" << endl;
+                pontos+=2;
                 cout << "Pontos: " << pontos << endl;
 
             }
