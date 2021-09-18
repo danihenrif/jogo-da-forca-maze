@@ -60,6 +60,8 @@ void JogoForca::initialize_game(int argc, string nomeArquivo){
 
 
 void JogoForca::loop(){
+    if(state==GAME_OVER){return;}//Finaliza antes de mostrar a tela em caso de erro no arquivo
+    
     //Iniciar o jogo ou listar
     cout << "Você deseja jogar ou listar os scores anteriores (1/0)? ";
     int op;
